@@ -1,0 +1,171 @@
+/* src/index.css  (or globals.css) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Color palette ─────────────────────────────────────────────────────── */
+:root {
+  --color-dark-teal-50: #eaf9fb;
+  --color-dark-teal-100: #d4f4f7;
+  --color-dark-teal-200: #a9e9ef;
+  --color-dark-teal-300: #7edee7;
+  --color-dark-teal-400: #54d3de;
+  --color-dark-teal-500: #29c8d6;
+  --color-dark-teal-600: #21a0ab;
+  --color-dark-teal-700: #187881;
+  --color-dark-teal-800: #105056;
+  --color-dark-teal-900: #08282b;
+  --color-dark-teal-950: #061c1e;
+
+  --color-pine-blue-50: #edf7f6;
+  --color-pine-blue-100: #dbf0ee;
+  --color-pine-blue-200: #b8e0dc;
+  --color-pine-blue-300: #94d1cb;
+  --color-pine-blue-400: #70c2ba;
+  --color-pine-blue-500: #4db3a8;
+  --color-pine-blue-600: #3d8f87;
+  --color-pine-blue-700: #2e6b65;
+  --color-pine-blue-800: #1f4743;
+  --color-pine-blue-900: #0f2422;
+  --color-pine-blue-950: #0b1918;
+
+  --color-muted-teal-50: #eff5f1;
+  --color-muted-teal-100: #dfece3;
+  --color-muted-teal-200: #bfd9c8;
+  --color-muted-teal-300: #9fc6ac;
+  --color-muted-teal-400: #80b391;
+  --color-muted-teal-500: #609f75;
+  --color-muted-teal-600: #4d805e;
+  --color-muted-teal-700: #396046;
+  --color-muted-teal-800: #26402f;
+  --color-muted-teal-900: #132017;
+  --color-muted-teal-950: #0d1610;
+
+  --color-evergreen-50: #e6fef1;
+  --color-evergreen-100: #cefde3;
+  --color-evergreen-200: #9cfcc7;
+  --color-evergreen-300: #6bfaab;
+  --color-evergreen-400: #39f98f;
+  --color-evergreen-500: #08f774;
+  --color-evergreen-600: #06c65c;
+  --color-evergreen-700: #059445;
+  --color-evergreen-800: #03632e;
+  --color-evergreen-900: #023117;
+  --color-evergreen-950: #012310;
+}
+
+/* ─── Dark theme (default) ───────────────────────────────────────────────── */
+html, html.dark {
+  --bg-page:      #0b1918;
+  --bg-panel:     #061c1e;
+  --bg-card:      #0b1918;
+  --bg-input:     #061c1e;
+  --border:       rgba(41, 200, 214, 0.18);
+  --text-primary:  #eaf9fb;
+  --text-secondary: rgba(84, 211, 222, 0.55);
+  --text-muted:   rgba(41, 200, 214, 0.35);
+  --accent:       #29c8d6;
+  --accent-hover: #21a0ab;
+  --accent-text:  #061c1e;
+}
+
+/* ─── Light theme ────────────────────────────────────────────────────────── */
+html.light {
+  --bg-page:       #f4fafa;
+  --bg-panel:      #ffffff;
+  --bg-card:       #ffffff;
+  --bg-input:      #ffffff;
+  --border:        #c8e8ea;
+  --text-primary:  #061c1e;
+  --text-secondary: #187881;
+  --text-muted:    #9ccdd1;
+  --accent:        #21a0ab;
+  --accent-hover:  #187881;
+  --accent-text:   #ffffff;
+}
+
+/* ─── Light mode component overrides ─────────────────────────────────────── */
+html.light input,
+html.light select,
+html.light textarea {
+  background: #ffffff !important;
+  border-color: #c8e8ea !important;
+  color: #061c1e !important;
+  box-shadow: 0 1px 3px rgba(8,40,43,.06);
+}
+html.light input::placeholder { color: #9ccdd1 !important; }
+html.light input:focus {
+  border-color: #21a0ab !important;
+  box-shadow: 0 0 0 3px rgba(33,160,171,.12) !important;
+}
+
+/* ─── Base resets ────────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ─── Theme-aware utility classes ────────────────────────────────────────── */
+.theme-root {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+}
+
+.theme-input {
+  background-color: var(--bg-input);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.theme-input::placeholder {
+  color: var(--text-muted);
+}
+
+.theme-input:focus {
+  border-color: var(--accent);
+}
+
+/* ─── Scrollbar styling for dropdown ─────────────────────────────────────── */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(41, 200, 214, 0.2);
+  border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(41, 200, 214, 0.4);
+}
+
+/* ─── Auth page animations ───────────────────────────────────────────────── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.45s ease both;
+}
+
+/* Stagger children */
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.12s; }
+.stagger > *:nth-child(3) { animation-delay: 0.19s; }
+.stagger > *:nth-child(4) { animation-delay: 0.26s; }
+.stagger > *:nth-child(5) { animation-delay: 0.33s; }
