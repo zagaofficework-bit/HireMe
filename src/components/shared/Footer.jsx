@@ -17,18 +17,19 @@ const Footer = () => (
         {/* ── Brand ──────────────────────────────────────────────────── */}
         <div className="col-span-2 sm:col-span-1">
           <div className="flex items-center gap-1.5 mb-3">
-            <span
+            {/* <span
               className="w-7 h-7 rounded-lg
                 bg-gradient-to-br from-[var(--accent)] to-[var(--color-dark-teal-800,#105056)]
                 flex items-center justify-center"
-            >
-              <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-              </svg>
-            </span>
-            <span className="text-lg font-bold text-[var(--text-primary)]">
-              Freelance<span className="text-[var(--accent)]">Hub</span>
-            </span>
+            > */}
+                <a href="/" className="flex items-center">
+              <img
+                src="/Hyrd logo.png"   // ✅ correct path
+                alt="Hyrd Logo"
+                className="h-16 sm:h-[68px] w-auto object-contain"  // ✅ bigger, still responsive
+              />
+            </a>
+            {/* </span> */}
           </div>
 
           <p className="text-xs text-[var(--text-muted)] leading-relaxed mb-4 max-w-[180px]">
