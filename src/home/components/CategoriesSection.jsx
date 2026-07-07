@@ -1,169 +1,223 @@
+// src/home/components/CategoriesSection.jsx
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCategories } from "../../hooks/useCategories";
 
-const categories = [
-  {
-    id: 1,
-    title: 'Development',
-    subtitle: 'Over 12,000 active experts',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-      </svg>
-    ),
-    tags: ['React', 'Node.js', 'Python', 'AWS'],
-    color: 'from-[#29c8d6]/20 to-[#105056]/20',
-    accent: '#29c8d6',
-  },
-  {
-    id: 2,
-    title: 'Design & Arts',
-    subtitle: '8,500 creative minds',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-      </svg>
-    ),
-    tags: ['Figma', 'Branding', 'UI/UX', 'Illustration'],
-    color: 'from-purple-500/15 to-pink-500/10',
-    accent: '#a855f7',
-  },
-  {
-    id: 3,
-    title: 'Marketing',
-    subtitle: '6,000 growth specialists',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-      </svg>
-    ),
-    tags: ['SEO', 'Ads', 'Growth', 'Email'],
-    color: 'from-orange-500/15 to-amber-500/10',
-    accent: '#f97316',
-  },
-  {
-    id: 4,
-    title: 'Writing',
-    subtitle: '4,500 expert writers',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-      </svg>
-    ),
-    tags: ['Copywriting', 'Blog', 'Technical', 'UX Copy'],
-    color: 'from-green-500/15 to-emerald-500/10',
-    accent: '#22c55e',
-  },
-  {
-    id: 5,
-    title: 'Video & Animation',
-    subtitle: '3,200 motion artists',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.845v6.31a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-      </svg>
-    ),
-    tags: ['After Effects', 'Motion', 'Editing', '3D'],
-    color: 'from-rose-500/15 to-red-500/10',
-    accent: '#f43f5e',
-  },
-  {
-    id: 6,
-    title: 'Data & AI',
-    subtitle: '5,100 data scientists',
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
-      </svg>
-    ),
-    tags: ['ML', 'Python', 'Analytics', 'LLMs'],
-    color: 'from-sky-500/15 to-blue-500/10',
-    accent: '#0ea5e9',
-  },
+const ACCENTS = [
+  { accent: '#29c8d6', from: 'rgba(41,200,214,0.15)',  to: 'rgba(16,80,86,0.15)'   },
+  { accent: '#a855f7', from: 'rgba(168,85,247,0.12)',  to: 'rgba(236,72,153,0.08)' },
+  { accent: '#f97316', from: 'rgba(249,115,22,0.12)',  to: 'rgba(245,158,11,0.08)' },
+  { accent: '#22c55e', from: 'rgba(34,197,94,0.12)',   to: 'rgba(16,185,129,0.08)' },
+  { accent: '#f43f5e', from: 'rgba(244,63,94,0.12)',   to: 'rgba(239,68,68,0.08)'  },
+  { accent: '#0ea5e9', from: 'rgba(14,165,233,0.12)',  to: 'rgba(59,130,246,0.08)' },
+  { accent: '#eab308', from: 'rgba(234,179,8,0.12)',   to: 'rgba(249,115,22,0.08)' },
+  { accent: '#8b5cf6', from: 'rgba(139,92,246,0.12)',  to: 'rgba(109,40,217,0.08)' },
 ];
 
+const INITIAL_VISIBLE = 6;
+
+const SkeletonCard = () => (
+  <div
+    className="rounded-2xl border p-5 animate-pulse"
+    style={{ borderColor: 'var(--border)', background: 'var(--bg-card)' }}
+  >
+    <div className="w-11 h-11 rounded-xl mb-4" style={{ background: 'var(--bg-elevated)' }} />
+    <div className="h-4 w-2/3 rounded mb-2" style={{ background: 'var(--bg-elevated)' }} />
+    <div className="h-3 w-1/2 rounded mb-4" style={{ background: 'var(--bg-elevated)' }} />
+    <div className="flex gap-1.5">
+      {[40, 52, 36].map((w) => (
+        <div key={w} className="h-5 rounded-md" style={{ width: w, background: 'var(--bg-elevated)' }} />
+      ))}
+    </div>
+  </div>
+);
+
+const ErrorState = ({ onRetry }) => (
+  <div className="col-span-full flex flex-col items-center justify-center py-16 gap-4">
+    <div className="text-4xl">⚠️</div>
+    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+      Failed to load categories.
+    </p>
+    <button onClick={onRetry} className="btn btn-secondary text-xs px-4 py-2">
+      Retry
+    </button>
+  </div>
+);
+
+const EmptyState = () => (
+  <div className="col-span-full flex flex-col items-center justify-center py-16 gap-3">
+    <div className="text-4xl">📂</div>
+    <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+      No categories available yet.
+    </p>
+  </div>
+);
+
 const CategoriesSection = () => {
-  const [activeId, setActiveId] = useState(1);
+  const navigate = useNavigate();
+  const { data: categories, isLoading, isError, refetch } = useCategories();
+
+  // hoveredSlug only drives the visual hover-active styling now —
+  // click navigates to /category/:slug instead of toggling local state.
+  const [hoveredSlug, setHoveredSlug] = useState(null);
+
+  // "View all" now navigates to a dedicated /categories page instead of
+  // expanding this grid in place — the homepage section always stays
+  // capped at INITIAL_VISIBLE, no local showAll toggle needed anymore.
+  const goToAllCategories = () => navigate('/categories');
+
+  const visibleCategories = !isLoading && !isError && categories?.length
+    ? categories.slice(0, INITIAL_VISIBLE)
+    : [];
+
+  const hasMore = categories?.length > INITIAL_VISIBLE;
 
   return (
-    <section className="py-16 sm:py-20 bg-white dark:bg-[#071f22] transition-colors duration-300">
+    <section
+      className="py-16 sm:py-20 transition-colors duration-300"
+      style={{ background: 'var(--bg-page)' }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header */}
         <div className="flex items-end justify-between mb-10">
           <div>
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#29c8d6] mb-2">What We Offer</p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-[Syne,sans-serif] leading-tight">
+            <p
+              className="text-xs font-semibold tracking-widest uppercase mb-2"
+              style={{ color: 'var(--accent)' }}
+            >
+              What We Offer
+            </p>
+            <h2
+              className="text-3xl sm:text-4xl font-extrabold leading-tight font-display"
+              style={{ color: 'var(--text-primary)' }}
+            >
               Explore Expertise
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm sm:text-base">
+            <p
+              className="mt-2 text-sm sm:text-base"
+              style={{ color: 'var(--text-secondary)' }}
+            >
               Top-rated categories curated for your business needs.
             </p>
           </div>
-          <a
-            href="#"
-            className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-[#29c8d6] hover:text-[#1fb8c5] transition-colors group"
-          >
-            View all
-            <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((cat) => (
+          {hasMore && (
             <button
-              key={cat.id}
-              onClick={() => setActiveId(cat.id)}
-              className={`group text-left p-5 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-                activeId === cat.id
-                  ? 'border-[#29c8d6]/50 bg-gradient-to-br from-[#29c8d6]/10 to-[#105056]/10 shadow-lg shadow-[#29c8d6]/10 dark:shadow-[#29c8d6]/5'
-                  : 'border-slate-200 dark:border-[#29c8d6]/10 bg-slate-50/60 dark:bg-[#0a2a2e]/50 hover:border-[#29c8d6]/30'
-              }`}
+              onClick={goToAllCategories}
+              className="hidden sm:flex items-center gap-1.5 text-sm font-semibold transition-colors group"
+              style={{ color: 'var(--accent)' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-hover)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--accent)')}
             >
-              {/* Icon */}
-              <div
-                className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br ${cat.color} transition-transform duration-300 group-hover:scale-110`}
-                style={{ color: cat.accent }}
-              >
-                {cat.icon}
-              </div>
-
-              <h3 className="text-base font-bold text-slate-800 dark:text-white mb-0.5 font-[Syne,sans-serif]">
-                {cat.title}
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">{cat.subtitle}</p>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1.5">
-                {cat.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-white dark:bg-[#061c1e] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-[#29c8d6]/10"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Arrow */}
-              <div className="flex items-center gap-1 mt-4 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: cat.accent }}>
-                Browse experts
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
+              View all
+              <span className="group-hover:translate-x-0.5 transition-transform inline-block">
+                →
+              </span>
             </button>
-          ))}
+          )}
         </div>
 
-        {/* Mobile View All */}
-        <div className="mt-6 sm:hidden text-center">
-          <a href="#" className="text-sm font-semibold text-[#29c8d6] hover:text-[#1fb8c5]">
-            View all categories →
-          </a>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {isLoading && Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+
+          {isError && <ErrorState onRetry={refetch} />}
+
+          {!isLoading && !isError && !categories?.length && <EmptyState />}
+
+          {visibleCategories.map((cat, idx) => {
+            const { accent, from, to } = ACCENTS[idx % ACCENTS.length];
+            const isHovered = hoveredSlug === cat.slug;
+
+            const inactiveFrom = from.replace(/[\d.]+\)$/, '0.05)');
+            const inactiveTo   = to.replace(/[\d.]+\)$/, '0.03)');
+
+            return (
+              <button
+                key={cat._id}
+                onClick={() => navigate(`/category/${cat.slug}`)}
+                onMouseEnter={() => setHoveredSlug(cat.slug)}
+                onMouseLeave={() => setHoveredSlug(null)}
+                className="group text-left p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                style={{
+                  border: '1px solid ' + (isHovered ? accent + '50' : accent + '25'),
+                  background: isHovered
+                    ? 'linear-gradient(135deg, ' + from + ', ' + to + ')'
+                    : 'linear-gradient(135deg, ' + inactiveFrom + ', ' + inactiveTo + ')',
+                  boxShadow: isHovered ? '0 8px 32px -8px ' + accent + '25' : undefined,
+                }}
+              >
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 text-xl transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background: 'linear-gradient(135deg, ' + from + ', ' + to + ')',
+                    border: '1px solid ' + accent + '30',
+                  }}
+                >
+                  {cat.icon || '💼'}
+                </div>
+
+                <h3
+                  className="text-base font-bold mb-0.5 font-display"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  {cat.name}
+                </h3>
+
+                <p className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>
+                  {cat.profileCount > 0
+                    ? cat.profileCount.toLocaleString() + '+ active experts'
+                    : cat.description || 'Explore experts'}
+                </p>
+
+                {cat.description && (
+                  <div className="flex flex-wrap gap-1.5 mb-1">
+                    {cat.description
+                      .split(/[,·•|]/)
+                      .slice(0, 4)
+                      .map((tag) => tag.trim())
+                      .filter(Boolean)
+                      .map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 rounded-md text-[11px] font-medium"
+                          style={{
+                            background: 'var(--bg-elevated)',
+                            color: 'var(--text-secondary)',
+                            border: '1px solid ' + accent + '20',
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                  </div>
+                )}
+
+                <div
+                  className="flex items-center gap-1 mt-4 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  style={{ color: accent }}
+                >
+                  Browse experts →
+                </div>
+              </button>
+            );
+          })}
         </div>
+
+        {/* Mobile: view all */}
+        {hasMore && (
+          <div className="mt-6 sm:hidden text-center">
+            <button
+              onClick={goToAllCategories}
+              className="text-sm font-semibold"
+              style={{ color: 'var(--accent)' }}
+            >
+              View all categories →
+            </button>
+          </div>
+        )}
+
       </div>
     </section>
   );

@@ -1,68 +1,45 @@
 // src/app/App.jsx
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import AppRoutes from '../routes/AppRoutes';
+import SessionRestorer from "../components/shared/SessionRestorer";
 
-import Home from '../home/pages/home';
- 
-import { fetchCurrentUser, finishInitializing } from '../features/auth/services/auth.slice';
-
-import SignupPage from '../features/auth/pages/SignupPage';
-import LoginPage from '../features/auth/pages/LoginPage';
-import OtpPage from '../features/auth/pages/OtpPage';
-// import ProfilePage from '../features/auth/pages/ProfilePage';
-
-const Spinner = () => (
-  <div className="min-h-screen bg-[#0b1918] flex items-center justify-center">
-    <div className="w-8 h-8 border-2 border-[#29c8d6] border-t-transparent rounded-full animate-spin" />
-  </div>
-);
-
-const PrivateRoute = ({ children }) => {
-  const { user, initializing } = useSelector((state) => state.auth);
-  if (initializing) return <Spinner />;
-  return user ? children : <Navigate to="/login" replace />;
-};
-
-const App = () => {
-  const dispatch = useDispatch();
-
+// ── ThemeInitializer ──────────────────────────────────────────────────────────
+const ThemeInitializer = () => {
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-
-    if (!token) {
-      // No token — skip API call, just stop the spinner
-      dispatch(finishInitializing());
-      return;
-    }
-
-    // Token exists — fetch the user profile to restore session
-    dispatch(fetchCurrentUser());
-  }, [dispatch]);
-
-  return (
-   
-      <BrowserRouter>
-        <Routes>
-           <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/otp" element={<OtpPage />} />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                {/* <ProfilePage /> */}
-              </PrivateRoute>
-            }
-          />
-          
-        </Routes>
-      </BrowserRouter>
-     
-    
-
-  );
+    const saved      = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark      = saved ? saved === 'dark' : prefersDark;
+    document.documentElement.classList.toggle('dark', isDark);
+  }, []);
+  return null;
 };
+
+// ── ScrollToTop ───────────────────────────────────────────────────────────────
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
+// ── App ───────────────────────────────────────────────────────────────────────
+// NOTE: <Provider>, <BrowserRouter>, <QueryClientProvider> are all in main.jsx.
+// Do NOT add them here or you get two separate Redux stores and injectStore
+// wires up the wrong one.
+const App = () => (
+  <>
+    <ThemeInitializer />
+    <ScrollToTop />
+
+    {/*
+      SessionRestorer runs the boot-check effect (fetchCurrentUser / finishInitializing)
+      BEFORE any ProtectedRoute evaluates. This prevents the flash-redirect to /login
+      that happens when an admin refreshes /admin while their refresh-cookie is still valid.
+    */}
+    <SessionRestorer />
+
+    <AppRoutes />
+  </>
+);
 
 export default App;

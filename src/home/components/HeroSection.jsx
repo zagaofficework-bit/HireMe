@@ -1,9 +1,28 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const popularTags = ['UI Design', 'Motion Graphics', 'React Dev', 'Copywriting', 'Python', 'Branding'];
 
 const HeroSection = () => {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  // Pushes to the search results page with the typed query as ?q=
+  // SearchPage reads this straight out of useSearchParams.
+  const goToSearch = (value) => {
+    const trimmed = value.trim();
+    navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : '/search');
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    goToSearch(query);
+  };
+
+  const handleTagClick = (tag) => {
+    setQuery(tag);
+    goToSearch(tag);
+  };
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-[#061c1e] dark:via-[#071f22] dark:to-[#0a2a2e] pt-16 pb-20 sm:pt-20 sm:pb-28 transition-colors duration-300">
@@ -49,7 +68,7 @@ const HeroSection = () => {
         </p>
 
         {/* Search Bar */}
-        <div className="relative max-w-xl mx-auto mb-5">
+        <form onSubmit={handleSubmit} className="relative max-w-xl mx-auto mb-5">
           <div className="flex items-center gap-2 bg-white dark:bg-[#0a2a2e] border border-slate-200 dark:border-[#29c8d6]/20 rounded-2xl px-4 py-2 shadow-xl shadow-slate-200/60 dark:shadow-[#29c8d6]/5 focus-within:border-[#29c8d6]/60 focus-within:shadow-[#29c8d6]/10 transition-all duration-300">
             <svg className="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -61,11 +80,14 @@ const HeroSection = () => {
               placeholder="Try 'UX Designer' or 'Python'"
               className="flex-1 bg-transparent text-slate-700 dark:text-slate-200 placeholder-slate-400 outline-none text-sm sm:text-base py-1"
             />
-            <button className="flex-shrink-0 px-5 py-2.5 bg-[#29c8d6] hover:bg-[#1fb8c5] text-[#061c1e] font-semibold text-sm rounded-xl shadow-lg shadow-[#29c8d6]/30 hover:shadow-[#29c8d6]/50 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0">
+            <button
+              type="submit"
+              className="flex-shrink-0 px-5 py-2.5 bg-[#29c8d6] hover:bg-[#1fb8c5] text-[#061c1e] font-semibold text-sm rounded-xl shadow-lg shadow-[#29c8d6]/30 hover:shadow-[#29c8d6]/50 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+            >
               Find Talent
             </button>
           </div>
-        </div>
+        </form>
 
         {/* Popular Tags */}
         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -73,7 +95,7 @@ const HeroSection = () => {
           {popularTags.map((tag) => (
             <button
               key={tag}
-              onClick={() => setQuery(tag)}
+              onClick={() => handleTagClick(tag)}
               className="px-3 py-1 rounded-full text-xs font-medium border border-slate-200 dark:border-[#29c8d6]/15 text-slate-600 dark:text-slate-400 hover:border-[#29c8d6]/50 hover:text-[#29c8d6] hover:bg-[#29c8d6]/5 transition-all duration-200 bg-white/60 dark:bg-[#0a2a2e]/60 backdrop-blur-sm"
             >
               {tag}
