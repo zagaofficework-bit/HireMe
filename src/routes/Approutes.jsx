@@ -19,8 +19,8 @@ const AdminCompaniesPage = lazy(() => import('../features/admin/pages/AdminCompa
 const MyCompanyPage = lazy(() => import('../features/company/pages/MyCompanyPage'));
 const EditCompanyPage = lazy(() => import('../features/company/pages/EditCompanyPage'));
 const PublicCompanyPage = lazy(() => import('../features/company/pages/PublicCompanyPage'));
-const UnauthorizedPage = lazy(() => import('../UnauthorizedPage'));
-const NotFoundPage = lazy(() => import('../NotFoundPage'));
+const UnauthorizedPage = lazy(() => import("../UnauthorizedPage"));
+const NotFoundPage = lazy(() => import("../NotfoundPage"));
 const BookmarksPage = lazy(() => import("../features/bookmark/pages/BookmarksPage"));
 const ClientDashboardPage = lazy(() => import('../features/company/pages/CompanyDashboardPage'));
 const SearchPage = lazy(() => import("../features/search/pages/SearchPage"));
