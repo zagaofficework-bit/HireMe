@@ -108,8 +108,8 @@ const SignupPage = () => {
       leftWidthClass="lg:w-5/12"
       rightWidthClass="lg:w-7/12"
       icon={<SignupIcon />}
-      leftHeading={<>Join the Elite.<br />Build Your Future.</>}
-      leftText="Whether you're a top freelancer or a client looking for exceptional talent — NEON is your platform."
+      leftHeading={<>Join the Hyrd.<br />Build Your Future.</>}
+      leftText="Whether you're a top freelancer or a client looking for exceptional talent — Hyrd is your platform."
       leftExtra={<FeatureList />}
       eyebrow="Get Started"
       title="Create your account"

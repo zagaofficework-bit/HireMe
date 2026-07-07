@@ -22,7 +22,7 @@ const SecurityNote = () => (
       Security Note
     </div>
     <p className="text-[var(--accent)]/60 text-xs leading-relaxed">
-      Never share your OTP with anyone. NEON will never ask for your code via call or email.
+      Never share your OTP with anyone. Hyrd will never ask for your code via call or email.
     </p>
   </div>
 );

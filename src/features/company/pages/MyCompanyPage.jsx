@@ -73,7 +73,7 @@ const MyCompanyPage = () => {
               Create Company Profile
             </h2>
             <p style={{ margin: '0.35rem 0 0', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-              Set up your company profile to start hiring on HireMe.
+              Set up your company profile to start hiring on Hyrd.
             </p>
           </div>
 

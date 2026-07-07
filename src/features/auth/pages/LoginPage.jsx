@@ -91,7 +91,7 @@ const LoginPage = () => {
   return (
     <AuthLayout
       icon={<LoginIcon />}
-      leftHeading={<>NEON<br />ELITE</>}
+      leftHeading={<>Hyrd</>}
       leftText="The freelance platform built for top talent. Connect, collaborate, and earn — on your terms."
       leftExtra={<StatsGrid />}
       eyebrow="Welcome Back"

@@ -45,7 +45,7 @@ const Navbar = () => {
               <img
                 src="/Hyrd logo.png"   // ✅ correct path
                 alt="Hyrd Logo"
-                className="h-16 sm:h-[68px] w-auto object-contain"  // ✅ bigger, still responsive
+                className="h-17 sm:h-[74px] w-auto object-contain"  // ✅ bigger, still responsive
               />
             </Link>
           </div>

@@ -145,7 +145,7 @@ const CompanyDashboardPage = () => {
                 🏢 Set up your company profile
               </h3>
               <p style={{ margin: '0.25rem 0 0', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                Create your company profile to start hiring on HireMe.
+                Create your company profile to start hiring on Hyrd.
               </p>
             </div>
             <button className="btn btn-primary" onClick={() => navigate('/company/me')}>

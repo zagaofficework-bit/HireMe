@@ -73,9 +73,9 @@ const PublicProfilePage = () => {
       alert(`${profile.fullName} hasn't listed a contact email yet.`);
       return;
     }
-    const subject = encodeURIComponent(`Regarding your HireMe profile`);
+    const subject = encodeURIComponent(`Regarding your Hyrd profile`);
     const body = encodeURIComponent(
-      `Hi ${profile.fullName?.split(' ')[0] || ''},\n\nI came across your profile on HireMe and would like to discuss a project.\n\n`
+      `Hi ${profile.fullName?.split(' ')[0] || ''},\n\nI came across your profile on Hyrd and would like to discuss a project.\n\n`
     );
     window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
   };
