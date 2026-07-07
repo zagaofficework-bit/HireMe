@@ -29,7 +29,7 @@ import {
   validateLocation,
   validateContact,
   validatePreferences,
-} from '../../../utils/profileValidation';
+} from '../../../utils/ProfileValidation';
 
 const SECTIONS = [
   { id: 'photo', label: 'Profile Photo', icon: '📷' },
