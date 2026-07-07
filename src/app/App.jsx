@@ -1,7 +1,7 @@
 // src/app/App.jsx
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import AppRoutes from "../routes/AppRoutes";
+import AppRoutes from "../routes/Approutes";
 import SessionRestorer from "../components/shared/SessionRestorer";
 
 // ── ThemeInitializer ──────────────────────────────────────────────────────────
