@@ -22,8 +22,8 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full bg-[var(--bg-panel)]/90 backdrop-blur-md border-b border-[var(--accent)]/10 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* ✅ Navbar height increased to fit bigger logo */}
-        <div className="flex items-center justify-between h-20">
+        {/* ✅ Navbar height now responsive: compact on mobile, roomier on desktop */}
+        <div className="flex items-center justify-between h-16 sm:h-20">
 
           {/* ── Logo ───────────────── */}
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -40,12 +40,12 @@ const Navbar = () => {
               </svg>
             </button>
 
-            {/* ✅ Logo enlarged */}
+            {/* ✅ Logo now scales properly: small on mobile, bigger on desktop */}
             <Link to="/" className="flex items-center">
               <img
                 src="/Hyrd logo.png"   // ✅ correct path
                 alt="Hyrd Logo"
-                className="h-17 sm:h-[74px] w-auto object-contain"  // ✅ bigger, still responsive
+                className="h-9 sm:h-14 md:h-16 lg:h-[74px] w-auto object-contain"  // ✅ fixed invalid h-17, now scales cleanly
               />
             </Link>
           </div>
