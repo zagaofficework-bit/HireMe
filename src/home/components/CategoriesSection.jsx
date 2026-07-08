@@ -16,9 +16,18 @@ const ACCENTS = [
 
 const INITIAL_VISIBLE = 6;
 
-const SkeletonCard = () => (
+// idx 0-1 → visible on every screen (mobile: 1 col = 2 stacked)
+// idx 2-3 → hidden on mobile, visible sm+ (tablet: 2 col = 4 total)
+// idx 4-5 → hidden below lg, visible lg+ (desktop: 3 col = 6 total)
+const visibilityForIndex = (idx) => {
+  if (idx < 2) return '';
+  if (idx < 4) return 'hidden sm:block';
+  return 'hidden lg:block';
+};
+
+const SkeletonCard = ({ idx = 0 }) => (
   <div
-    className="rounded-2xl border p-5 animate-pulse"
+    className={`rounded-2xl border p-5 animate-pulse ${visibilityForIndex(idx)}`}
     style={{ borderColor: 'var(--border)', background: 'var(--bg-card)' }}
   >
     <div className="w-11 h-11 rounded-xl mb-4" style={{ background: 'var(--bg-elevated)' }} />
@@ -70,7 +79,10 @@ const CategoriesSection = () => {
     ? categories.slice(0, INITIAL_VISIBLE)
     : [];
 
-  const hasMore = categories?.length > INITIAL_VISIBLE;
+  // Always offer a way to reach the full list — the responsive
+  // per-breakpoint hiding below means mobile only ever shows 2,
+  // so "view all" is useful even when total count is small.
+  const showViewAll = (categories?.length || 0) > 2;
 
   return (
     <section
@@ -101,10 +113,10 @@ const CategoriesSection = () => {
             </p>
           </div>
 
-          {hasMore && (
+          {showViewAll && (
             <button
               onClick={goToAllCategories}
-              className="hidden sm:flex items-center gap-1.5 text-sm font-semibold transition-colors group"
+              className="hidden lg:flex items-center gap-1.5 text-sm font-semibold transition-colors group flex-shrink-0"
               style={{ color: 'var(--accent)' }}
               onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-hover)')}
               onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--accent)')}
@@ -119,7 +131,7 @@ const CategoriesSection = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {isLoading && Array.from({ length: 6 }).map((_, i) => (
-            <SkeletonCard key={i} />
+            <SkeletonCard key={i} idx={i} />
           ))}
 
           {isError && <ErrorState onRetry={refetch} />}
@@ -139,7 +151,7 @@ const CategoriesSection = () => {
                 onClick={() => navigate(`/category/${cat.slug}`)}
                 onMouseEnter={() => setHoveredSlug(cat.slug)}
                 onMouseLeave={() => setHoveredSlug(null)}
-                className="group text-left p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className={`group text-left p-5 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${visibilityForIndex(idx)}`}
                 style={{
                   border: '1px solid ' + (isHovered ? accent + '50' : accent + '25'),
                   background: isHovered
@@ -205,9 +217,9 @@ const CategoriesSection = () => {
           })}
         </div>
 
-        {/* Mobile: view all */}
-        {hasMore && (
-          <div className="mt-6 sm:hidden text-center">
+        {/* Mobile & tablet: bottom "view all" link (desktop uses the top-right one) */}
+        {showViewAll && (
+          <div className="mt-6 lg:hidden text-center">
             <button
               onClick={goToAllCategories}
               className="text-sm font-semibold"

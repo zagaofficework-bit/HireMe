@@ -171,7 +171,7 @@ const OtpPage = () => {
         </div>
 
         {/* OTP digit boxes */}
-        <div className="flex gap-3 justify-between mb-7" onPaste={handlePaste}>
+        <div className="flex gap-2 sm:gap-3 justify-between mb-7" onPaste={handlePaste}>
           {digits.map((digit, idx) => (
             <input
               key={idx}
@@ -183,8 +183,8 @@ const OtpPage = () => {
               onChange={(e) => handleChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(idx, e)}
               className={[
-                'flex-1 aspect-square max-w-[60px] rounded-xl text-center',
-                'text-[var(--text-primary)] text-2xl font-black',
+                'flex-1 min-w-0 aspect-square max-w-[52px] sm:max-w-[60px] rounded-xl text-center',
+                'text-[var(--text-primary)] text-xl sm:text-2xl font-black',
                 'border-2 transition-all duration-200 focus:outline-none',
                 digit
                   ? 'border-[var(--accent)] bg-[var(--accent)]/10 shadow-lg shadow-[var(--accent)]/20'

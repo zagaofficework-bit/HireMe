@@ -1,12 +1,12 @@
 // src/components/home/FeaturedProfessionals.jsx
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHomepageData } from '../../hooks/useHomepage';
 import { ProfileCardCompact } from "../../features/profile/components/ProfileCardCompact";
 
 // ─── Skeleton card shown while loading ───────────────────────────────────────
 const SkeletonCard = () => (
-  <div className="card animate-pulse">
+  <div className="card animate-pulse flex-none w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)]">
     <div className="flex items-start gap-3">
       <div className="w-16 h-16 rounded-xl flex-shrink-0" style={{ background: 'var(--bg-elevated)' }} />
       <div className="flex-1 space-y-2">
@@ -27,46 +27,66 @@ const SkeletonCard = () => (
 
 // ─── Main section ─────────────────────────────────────────────────────────────
 const FeaturedProfessionals = () => {
-  const [current, setCurrent] = useState(0);
   const { data, isLoading, isError } = useHomepageData();
   const navigate = useNavigate();
 
   const professionals = data?.featuredProfiles || [];
-  const visible = 3;
-  const maxStart = Math.max(0, professionals.length - visible);
 
-  const prev = () => setCurrent((c) => Math.max(0, c - 1));
-  const next = () => setCurrent((c) => Math.min(maxStart, c + 1));
+  const trackRef = useRef(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
 
-  const visibleProfs = professionals.slice(current, current + visible);
+  const updateEdges = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    setAtStart(el.scrollLeft <= 4);
+    setAtEnd(el.scrollLeft >= maxScroll - 4);
+  }, []);
+
+  useEffect(() => {
+    updateEdges();
+    window.addEventListener('resize', updateEdges);
+    return () => window.removeEventListener('resize', updateEdges);
+  }, [updateEdges, professionals.length]);
+
+  const scrollByPage = (dir) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
+  };
+
   const goToProfile = (id) => navigate(`/profile/${id}`);
   const goToHire = (id) => navigate(`/profile/${id}/hire`);
+
+  const showArrows = professionals.length > 1;
 
   return (
     <section className="py-16 sm:py-20" style={{ background: 'var(--bg-page)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
+        <div className="flex items-end justify-between mb-8 sm:mb-10 gap-3">
+          <div className="min-w-0">
             <p className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: 'var(--accent)' }}>
               Hand-Picked
             </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>
+            <h2 className="text-2xl sm:text-4xl font-extrabold font-display" style={{ color: 'var(--text-primary)' }}>
               Featured Professionals
             </h2>
-            <p className="mt-2 text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>
+            <p className="mt-2 text-xs sm:text-base" style={{ color: 'var(--text-secondary)' }}>
               Verified experts with stellar track records.
             </p>
           </div>
 
-          {/* Nav arrows — only show when there are enough cards to paginate */}
-          {professionals.length > visible && (
-            <div className="hidden sm:flex gap-2">
+          {/* Nav arrows — visible on every screen size now */}
+          {showArrows && !isLoading && !isError && (
+            <div className="flex gap-2 flex-shrink-0">
               <button
-                onClick={prev}
-                disabled={current === 0}
-                className="w-10 h-10 rounded-full border flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+                onClick={() => scrollByPage(-1)}
+                disabled={atStart}
+                aria-label="Previous"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
                 style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,9 +94,10 @@ const FeaturedProfessionals = () => {
                 </svg>
               </button>
               <button
-                onClick={next}
-                disabled={current >= maxStart}
-                className="w-10 h-10 rounded-full border flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+                onClick={() => scrollByPage(1)}
+                disabled={atEnd}
+                aria-label="Next"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
                 style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +110,7 @@ const FeaturedProfessionals = () => {
 
         {/* Loading skeletons */}
         {isLoading && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="flex gap-4 sm:gap-5 overflow-hidden">
             {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
           </div>
         )}
@@ -108,22 +129,22 @@ const FeaturedProfessionals = () => {
           </div>
         )}
 
-        {/* Desktop: sliding window */}
+        {/* Carousel: 1-up mobile, 2-up tablet, 3-up desktop — swipe or arrows */}
         {!isLoading && !isError && professionals.length > 0 && (
-          <>
-            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {visibleProfs.map((pro) => (
-                <ProfileCardCompact key={pro._id} profile={pro} onView={goToProfile} onHire={goToHire} />
-              ))}
-            </div>
-
-            {/* Mobile: all stacked */}
-            <div className="sm:hidden grid grid-cols-1 gap-4">
-              {professionals.map((pro) => (
-                <ProfileCardCompact key={pro._id} profile={pro} onView={goToProfile} onHire={goToHire} />
-              ))}
-            </div>
-          </>
+          <div
+            ref={trackRef}
+            onScroll={updateEdges}
+            className="featured-track flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2"
+          >
+            {professionals.map((pro) => (
+              <div
+                key={pro._id}
+                className="flex-none w-[92%] xs:w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] snap-start"
+              >
+                <ProfileCardCompact profile={pro} onView={goToProfile} onHire={goToHire} />
+              </div>
+            ))}
+          </div>
         )}
 
         {/* Browse All */}
@@ -139,6 +160,16 @@ const FeaturedProfessionals = () => {
         )}
 
       </div>
+
+      <style>{`
+        .featured-track {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .featured-track::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 };
