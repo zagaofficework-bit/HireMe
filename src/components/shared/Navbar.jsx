@@ -72,7 +72,7 @@ const Navbar = () => {
             {/* ── Right actions ───────────────── */}
             <div className="flex items-center gap-2 sm:gap-3">
 
-              {/* ---- Mobile-only icon cluster: search, theme, hamburger ---- */}
+              {/* ---- Mobile-only icon cluster, in order: search → bell → theme → profile → hamburger ---- */}
               <button
                 className="md:hidden p-2 text-[var(--text-muted)] hover:text-[var(--accent)] transition"
                 onClick={() => setSearchOpen(!searchOpen)}
@@ -83,9 +83,21 @@ const Navbar = () => {
                 </svg>
               </button>
 
+              {user && (
+                <div className="md:hidden">
+                  <NotificationBell />
+                </div>
+              )}
+
               <div className="md:hidden">
                 <ThemeToggle />
               </div>
+
+              {user && (
+                <div className="md:hidden">
+                  <ProfileDropdownMenu />
+                </div>
+              )}
 
               <button
                 className="md:hidden p-2 text-[var(--text-secondary)]"
@@ -105,7 +117,11 @@ const Navbar = () => {
                 <span className="hidden lg:inline">Search</span>
               </button>
 
-              {user && <NotificationBell />}
+              {user && (
+                <div className="hidden md:block">
+                  <NotificationBell />
+                </div>
+              )}
 
               <div className="hidden md:block">
                 <ThemeToggle />

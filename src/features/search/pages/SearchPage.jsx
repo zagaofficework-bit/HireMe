@@ -1,5 +1,5 @@
 // src/features/search/pages/SearchPage.jsx
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
 import SearchFilters from '../components/SearchFilters';
@@ -7,9 +7,13 @@ import { useSearchProfiles } from '../../../hooks/useSearch';
 import { ProfileCardCompact } from '../../profile/components/ProfileCardCompact';
 import MainLayout from '../../../layouts/MainLayout';
 
+// Keys that don't count as "filters" for the mobile Filters badge
+const NON_FILTER_KEYS = new Set(['q', 'page']);
+
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const filters = useMemo(() => {
     const obj = {};
@@ -18,6 +22,11 @@ const SearchPage = () => {
   }, [searchParams]);
 
   const page = Number(filters.page) || 1;
+
+  const activeFilterCount = useMemo(
+    () => Object.keys(filters).filter((k) => !NON_FILTER_KEYS.has(k)).length,
+    [filters],
+  );
 
   const { data, isLoading, isFetching, isError } = useSearchProfiles(filters);
 
@@ -49,11 +58,20 @@ const SearchPage = () => {
         </div>
 
         <div className="mb-6">
-          <SearchBar initialValue={filters.q || ''} onSearch={(q) => updateFilters({ q })} />
+          <SearchBar
+            initialValue={filters.q || ''}
+            onSearch={(q) => updateFilters({ q })}
+            activeFilterCount={activeFilterCount}
+            onFilterClick={() => setMobileFiltersOpen(true)}
+            availability={filters.availability || ''}
+            onAvailabilityChange={(availability) => updateFilters({ availability })}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
-          <aside className="lg:sticky lg:top-20 self-start">
+          {/* Desktop filters sidebar — unchanged, just now explicitly desktop-only since
+              the mobile "Filters" pill in SearchBar opens the drawer below instead */}
+          <aside className="hidden lg:block lg:sticky lg:top-20 self-start">
             <SearchFilters filters={filters} onApply={updateFilters} />
           </aside>
 
@@ -113,6 +131,45 @@ const SearchPage = () => {
           </main>
         </div>
       </div>
+
+      {/* ══════════════════ Mobile/tablet filters drawer ══════════════════
+          Opened by the "Filters" pill inside SearchBar (lg:hidden there too) */}
+      <div
+        className={`lg:hidden fixed inset-0 z-[90] bg-black/60 transition-opacity duration-300
+          ${mobileFiltersOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setMobileFiltersOpen(false)}
+      />
+
+      <aside
+        className={`lg:hidden fixed top-0 right-0 z-[100] h-screen w-[88%] max-w-sm
+          bg-[var(--bg-panel)] shadow-2xl flex flex-col overflow-y-auto
+          transform transition-transform duration-300 ease-in-out
+          ${mobileFiltersOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        <div className="flex items-center justify-between px-5 h-16 border-b border-[var(--accent)]/10 flex-shrink-0">
+          <h2 className="text-sm font-bold text-[var(--text-primary)]">Filters</h2>
+          <button
+            type="button"
+            onClick={() => setMobileFiltersOpen(false)}
+            className="p-2 text-[var(--text-secondary)]"
+            aria-label="Close filters"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-5">
+          <SearchFilters
+            filters={filters}
+            onApply={(patch) => {
+              updateFilters(patch);
+              setMobileFiltersOpen(false);
+            }}
+          />
+        </div>
+      </aside>
     </MainLayout>
   );
 };

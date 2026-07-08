@@ -1,5 +1,7 @@
 // src/components/shared/Footer.jsx
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useTheme } from './ThemeContext'; // adjust path if your theme hook lives elsewhere
 
 const LINKS = {
   Platform: ['Browse Talent', 'Post a Project', 'How It Works', 'Pricing'],
@@ -49,10 +51,13 @@ const SOCIALS = [
 
 const Footer = () => {
   const [openGroup, setOpenGroup] = useState(null);
+  const { theme } = useTheme();
 
   const toggleGroup = (group) => {
     setOpenGroup((prev) => (prev === group ? null : group));
   };
+
+  const logoSrc = theme === 'dark' ? '/hyrdlogo2.png' : '/hyrdlogo1.png';
 
   return (
     <footer className="bg-[var(--bg-page)] border-t border-[var(--accent)]/10 transition-colors duration-300">
@@ -60,13 +65,9 @@ const Footer = () => {
 
         {/* Brand */}
         <div className="mb-8 sm:mb-10">
-          <a href="/" className="inline-flex items-center gap-1.5 mb-3">
-            <img
-              src="/Hyrd logo.png"
-              alt="Hyrd Logo"
-              className="h-12 sm:h-16 w-auto object-contain"
-            />
-          </a>
+          <Link to="/" className="flex items-center">
+            <img src={logoSrc} alt="Hyrd Logo" className="h-9 w-auto object-contain" />
+          </Link>
           <p className="text-xs text-[var(--text-muted)] leading-relaxed max-w-xs">
             The world's marketplace for creative and technical talent.
           </p>
