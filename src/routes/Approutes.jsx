@@ -26,7 +26,7 @@ const ClientDashboardPage = lazy(() => import('../features/company/pages/Company
 const SearchPage = lazy(() => import("../features/search/pages/SearchPage"));
 const NotificationPage = lazy(() => import("../features/notification/pages/NotificationsPage"));
 const ReviewPage = lazy(() => import("../features/review/pages/MyReviewsPage"));
-const FreelancerReviewsPage = lazy(() => import("../features/reviews/pages/FreelancerReviewsPage"));
+const FreelancerReviewsPage = lazy(() => import("../features/review/pages/FreelancerReviewsPage"));
 const CategoryPage = lazy(() => import('../features/categories/pages/CategoryPage'));
 const VerificationPage = lazy(() => import('../features/verification/pages/VerificationPage'));
 const HireRequestsPage = lazy(() => import("../features/hire/pages/HireRequestsPage"));
