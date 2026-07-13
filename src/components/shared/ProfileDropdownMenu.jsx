@@ -16,7 +16,7 @@ const MENU_BY_ROLE = {
     { to: '/profile/me',            label: 'My Profile'   },
     { to: '/profile/edit',          label: 'Edit Profile' },
     { to: '/profile/notifications', label: 'Notification' },
-    { to: '/profile/reviews',       label: 'Reviews'      },
+    { to: '/profile/me/reviews',       label: 'Reviews'      },
     { to: '/settings',              label: 'Settings'     },
   ],
   client: [

@@ -26,6 +26,7 @@ const ClientDashboardPage = lazy(() => import('../features/company/pages/Company
 const SearchPage = lazy(() => import("../features/search/pages/SearchPage"));
 const NotificationPage = lazy(() => import("../features/notification/pages/NotificationsPage"));
 const ReviewPage = lazy(() => import("../features/review/pages/MyReviewsPage"));
+const FreelancerReviewsPage = lazy(() => import("../features/reviews/pages/FreelancerReviewsPage"));
 const CategoryPage = lazy(() => import('../features/categories/pages/CategoryPage'));
 const VerificationPage = lazy(() => import('../features/verification/pages/VerificationPage'));
 const HireRequestsPage = lazy(() => import("../features/hire/pages/HireRequestsPage"));
@@ -95,9 +96,21 @@ const AppRoutes = () => (
       <Route element={<ProtectedRoute allowedRoles={['client']} />}>
         <Route path="/profile/:id/hire" element={<HireRequestPage />} />
       </Route>
+
+      {/* Own reviews — navbar "Reviews" link for a logged-in freelancer
+          viewing feedback left on their own profile. MUST be before
+          /profile/:id/reviews, same rule as /profile/me above. */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/profile/me/reviews" element={<FreelancerReviewsPage />} />
+      </Route>
+
       {/* Public profile — dynamic :id AFTER all static /profile/* segments */}
       {/* Public profile */}
       <Route path="/profile/:id" element={<PublicProfilePage />} />
+
+      {/* Public — anyone viewing a specific freelancer's reviews,
+          reached via the "View more" button on ReviewsCarousel. */}
+      <Route path="/profile/:id/reviews" element={<FreelancerReviewsPage />} />
 
       {/* Company — /company/me and /company/edit MUST be before /company/:slug */}
       <Route element={<ProtectedRoute allowedRoles={['client']} />}>

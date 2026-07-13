@@ -15,7 +15,7 @@ import MainLayout from '../../../layouts/MainLayout';
 import ReviewCard from '../components/ReviewCard';
 import StarRating from '../components/StarRating';
 import { useProfileReviews } from '../../../hooks/useReviews';
-import { usePublicProfile } from '../../../hooks/useProfile';
+import { usePublicProfile, useMyProfile } from '../../../hooks/useProfile';
 
 const PAGE_SIZE = 12;
 
@@ -26,39 +26,53 @@ const SORT_OPTIONS = [
   { value: 'lowest', label: 'Lowest rated' },
 ];
 
-const normalize = (data) => {
-  if (!data) return { reviews: [], avgRating: 0, count: 0, hasMore: false };
-  if (Array.isArray(data)) {
-    const count = data.length;
-    const avgRating = count ? data.reduce((sum, r) => sum + (r.rating || 0), 0) / count : 0;
-    return { reviews: data, avgRating, count, hasMore: false };
-  }
-  const reviews = data.reviews || [];
-  const avgRating = data.stats?.avgRating ?? data.avgRating ?? (reviews.length
-    ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length
+// Matches reviews.api.js -> fetchProfileReviews, which resolves to
+// `data.data` = { reviews, pagination }. avgRating isn't returned by
+// that endpoint, so it's preferred from profile.stats (if your Profile
+// model tracks it) and otherwise averaged from the reviews loaded so far.
+const normalize = (data, profile, loadedCount) => {
+  const reviews = data?.reviews || [];
+  const pagination = data?.pagination || {};
+  const count = pagination.total ?? profile?.stats?.reviewCount ?? reviews.length;
+  const avgRating = profile?.stats?.avgRating ?? (loadedCount
+    ? undefined // filled in by caller from the full accumulated list
     : 0);
-  const count = data.stats?.count ?? data.total ?? reviews.length;
-  const hasMore = data.page && data.totalPages ? data.page < data.totalPages : false;
-  return { reviews, avgRating, count, hasMore };
+  const hasMore = pagination.page && pagination.totalPages
+    ? pagination.page < pagination.totalPages
+    : false;
+  return { reviews, count, avgRating, hasMore };
 };
 
 const FreelancerReviewsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: profile } = usePublicProfile(id);
+
+  // "/profile/me/reviews" — navbar link, freelancer viewing feedback on
+  // their own profile. "/profile/:id/reviews" — public, reached via the
+  // "View more" button on someone else's profile. Same page, different
+  // profile source.
+  const isOwnProfile = id === 'me';
+  const { data: myProfile } = useMyProfile();
+  const { data: otherProfile } = usePublicProfile(isOwnProfile ? undefined : id);
+  const profile = isOwnProfile ? myProfile : otherProfile;
+  const reviewsProfileId = isOwnProfile ? myProfile?._id : id;
+  const profileLink = isOwnProfile ? '/profile/me' : `/profile/${id}`;
 
   const [sortBy, setSortBy] = useState('newest');
   const [page, setPage] = useState(1);
   const [allReviews, setAllReviews] = useState([]);
 
-  const { data, isLoading, isFetching, isError } = useProfileReviews(id, {
+  const { data, isLoading, isFetching, isError } = useProfileReviews(reviewsProfileId, {
     page,
     limit: PAGE_SIZE,
     sortBy,
   });
 
-  const { avgRating, count, hasMore } = normalize(data);
-  const pageReviews = Array.isArray(data) ? data : data?.reviews || [];
+  const { count, hasMore } = normalize(data, profile);
+  const pageReviews = data?.reviews || [];
+  const avgRating = profile?.stats?.avgRating ?? (allReviews.length
+    ? allReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / allReviews.length
+    : 0);
 
   // Accumulate pages for "Load more"; reset when sort changes.
   useEffect(() => {
@@ -163,7 +177,7 @@ const FreelancerReviewsPage = () => {
         )}
 
         <div className="mt-10">
-          <Link to={`/profile/${id}`} className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+          <Link to={profileLink} className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>
             ← Back to profile
           </Link>
         </div>

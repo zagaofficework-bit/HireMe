@@ -13,7 +13,7 @@ import {
   useDeleteProfile,
 } from '../../../hooks/useEditProfile';
 import MainLayout from '../../../layouts/MainLayout';
-import ProfileSectionSidebar from '../components/ProfileSectionSidebar';
+import ProfileSectionSidebar, { UpcomingSections } from '../components/ProfileSectionSidebar';
 import ProfileImageUploader from '../components/ProfileImageUploader';
 import SkillsSection from '../components/SkillsSection';
 import ExperienceSection from '../components/ExperienceSection';
@@ -401,6 +401,16 @@ const EditProfilePage = () => {
                   </button>
                 </form>
               </section>
+
+              {/* Mobile-only "what's next" pills, under the card — matches
+                  the reference design instead of the old top icon strip. */}
+              <UpcomingSections
+                sections={SECTIONS}
+                activeSection="basic"
+                onSelect={() => {}}
+                completion={{}}
+                lockedIds={LOCKED_UNTIL_CREATED}
+              />
             </div>
           </div>
         </div>
@@ -818,6 +828,20 @@ const EditProfilePage = () => {
                   {isDeleting ? 'Deleting...' : 'Delete my profile'}
                 </button>
               </section>
+            )}
+
+            {/* Mobile-only "what's next" pills, under the active card —
+                matches the reference design instead of the old top icon
+                strip. Hidden on desktop; the full vertical sidebar
+                already shows every section there. */}
+            {activeSection !== 'danger' && (
+              <UpcomingSections
+                sections={SECTIONS}
+                activeSection={activeSection}
+                onSelect={setActiveSection}
+                completion={completion}
+                lockedIds={[]}
+              />
             )}
 
           </div>

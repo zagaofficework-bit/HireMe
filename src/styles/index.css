@@ -546,7 +546,12 @@ textarea.input-field {
   gap: 1.5rem;
 }
 
-@media (max-width: 800px) {
+/* FIX: was max-width: 800px, but ProfileSectionSidebar's mobile/desktop
+   split uses Tailwind's `md` breakpoint (768px). The 32px gap between
+   the two meant a narrow window (768–800px) showed the desktop vertical
+   nav squeezed into a still-stacked column layout. Matched to 767px so
+   both switch at the exact same point. */
+@media (max-width: 767px) {
   .edit-profile-layout { flex-direction: column; }
   .edit-profile-sidebar {
     position: static;

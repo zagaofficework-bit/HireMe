@@ -105,8 +105,6 @@ const PublicProfilePage = () => {
             <CertificationsDisplay certifications={profile.certifications} />
             <SocialDisplay social={profile.social} />
             <PreferencesDisplay profile={profile} />
-
-            <ReviewsCarousel profileId={id} />
           </div>
 
           {/* Sidebar — quick facts + actions, sticky while scrolling */}
@@ -115,6 +113,12 @@ const PublicProfilePage = () => {
               <ProfileSidebar profile={profile} onHire={goToHire} onMessage={goToMessage} />
             </div>
           </aside>
+        </div>
+
+        {/* Full width — outside the two-column grid so it isn't
+            squeezed by the sidebar's 300px column. */}
+        <div className="mt-10">
+          <ReviewsCarousel profileId={id} profile={profile} />
         </div>
 
         <div className="mt-10">

@@ -18,24 +18,23 @@ import { useProfileReviews } from '../../../hooks/useReviews';
 
 const AUTO_ROTATE_MS = 5000;
 
-const normalize = (data) => {
-  if (!data) return { reviews: [], avgRating: 0, count: 0 };
-  if (Array.isArray(data)) {
-    const count = data.length;
-    const avgRating = count ? data.reduce((sum, r) => sum + (r.rating || 0), 0) / count : 0;
-    return { reviews: data, avgRating, count };
-  }
-  const reviews = data.reviews || [];
-  const avgRating = data.stats?.avgRating ?? data.avgRating ?? (reviews.length
+// Matches reviews.api.js -> fetchProfileReviews, which resolves to
+// `data.data` = { reviews, pagination }. There's no separate ratings
+// endpoint, so avgRating is preferred from profile.stats (if your
+// Profile model tracks it) and falls back to averaging the reviews
+// actually returned on this page.
+const normalize = (data, profile) => {
+  const reviews = data?.reviews || [];
+  const count = data?.pagination?.total ?? profile?.stats?.reviewCount ?? reviews.length;
+  const avgRating = profile?.stats?.avgRating ?? (reviews.length
     ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length
     : 0);
-  const count = data.stats?.count ?? data.total ?? reviews.length;
   return { reviews, avgRating, count };
 };
 
-const ReviewsCarousel = ({ profileId }) => {
+const ReviewsCarousel = ({ profileId, profile }) => {
   const { data, isLoading, isError } = useProfileReviews(profileId, { limit: 9, sortBy: 'newest' });
-  const { reviews, avgRating, count } = normalize(data);
+  const { reviews, avgRating, count } = normalize(data, profile);
 
   const trackRef = useRef(null);
   const cardRef = useRef(null);
@@ -144,8 +143,7 @@ const ReviewsCarousel = ({ profileId }) => {
         onScroll={handleScroll}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
-        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-thin pb-1"
-        style={{ scrollbarWidth: 'thin' }}
+        className="no-scrollbar flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory"
       >
         {reviews.map((review, i) => (
           <div
@@ -158,29 +156,19 @@ const ReviewsCarousel = ({ profileId }) => {
         ))}
       </div>
 
-      {reviews.length > 1 && (
-        <div className="flex items-center justify-center gap-1.5 mt-5">
-          {reviews.map((r, i) => (
-            <button
-              key={r._id}
-              type="button"
-              onClick={() => scrollToIndex(i)}
-              aria-label={`Go to review ${i + 1}`}
-              className="h-1.5 rounded-full transition-all"
-              style={{
-                width: activeIndex === i ? '20px' : '6px',
-                backgroundColor: activeIndex === i ? 'var(--accent)' : 'var(--border-strong)',
-              }}
-            />
-          ))}
-        </div>
-      )}
-
       <div className="flex justify-center mt-7">
         <Link to={`/profile/${profileId}/reviews`} className="btn btn-secondary">
-          View all reviews
+          View more
         </Link>
       </div>
+
+      {/* Hides the native horizontal scrollbar on the track above — the
+          custom prev/next arrows are the intended way to navigate, the
+          browser's default scrollbar is just visual noise here. */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+      `}</style>
     </section>
   );
 };

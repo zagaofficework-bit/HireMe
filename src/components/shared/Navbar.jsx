@@ -201,6 +201,25 @@ const Navbar = () => {
               )}
             </div>
           </div>
+
+          {/* ── Mobile pill nav row (same links as desktop, horizontal scroll) ── */}
+          <div className="md:hidden flex items-center gap-2 overflow-x-auto pb-3 -mt-1 scrollbar-thin">
+            {NAV_LINKS.map(({ label, path }) => {
+              const active = location.pathname === path;
+              return (
+                <Link
+                  key={label}
+                  to={path}
+                  className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition
+                    ${active
+                      ? 'bg-[var(--accent)] text-[var(--accent-text)]'
+                      : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border)]'}`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </nav>
 
