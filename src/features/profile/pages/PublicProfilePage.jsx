@@ -18,10 +18,15 @@
 // facts + hire/message actions so they're always in view while
 // scrolling. Collapses to a single column below `lg`, with the sidebar
 // appearing after the hero.
+//
+// REVIEWS: ReviewsCarousel ("What Clients Say") added directly after
+// PreferencesDisplay — featured reviews + a "View all reviews" button
+// that routes to /profile/:id/reviews (FreelancerReviewsPage).
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { usePublicProfile } from '../../../hooks/useProfile';
 import MainLayout from '../../../layouts/MainLayout';
+import ReviewsCarousel from "../../review/components/ReviewsCarousel";
 import {
   ProfileHero,
   ProfileSidebar,
@@ -100,6 +105,8 @@ const PublicProfilePage = () => {
             <CertificationsDisplay certifications={profile.certifications} />
             <SocialDisplay social={profile.social} />
             <PreferencesDisplay profile={profile} />
+
+            <ReviewsCarousel profileId={id} />
           </div>
 
           {/* Sidebar — quick facts + actions, sticky while scrolling */}

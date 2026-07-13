@@ -13,19 +13,23 @@ import { logoutApi } from '../../api/auth.api';
 
 const MENU_BY_ROLE = {
   user: [
-    { to: '/profile/me',   label: 'My Profile'    },
-    { to: '/profile/edit', label: 'Edit Profile'  },
-    { to: '/settings',     label: 'Settings'      },
+    { to: '/profile/me',            label: 'My Profile'   },
+    { to: '/profile/edit',          label: 'Edit Profile' },
+    { to: '/profile/notifications', label: 'Notification' },
+    { to: '/profile/reviews',       label: 'Reviews'      },
+    { to: '/settings',              label: 'Settings'     },
   ],
   client: [
-    { to: '/company/dashboard', label: 'Dashboard'        },
-    { to: '/company/me',       label: 'Company Profile'  },
-    { to: '/company/bookmarks',        label: 'Bookmarks'        },
-    { to: '/company/settings',         label: 'Settings'         },
+    { to: '/company/dashboard',     label: 'Company Dashboard' },
+    { to: '/company/me',            label: 'Company Profile'   },
+    { to: '/company/notifications', label: 'Notifications'     },
+    { to: '/company/bookmarks',     label: 'Bookmarks'         },
+    { to: '/company/settings',      label: 'Settings'          },
   ],
   admin: [
-    { to: '/admin',    label: 'Admin Panel' },
-    { to: '/settings', label: 'Settings'    },
+    { to: '/admin/analytics',     label: 'Analytics'     },
+    { to: '/admin',               label: 'Admin Panel'   },
+    { to: '/admin/notifications', label: 'Notifications' },
   ],
 };
 
