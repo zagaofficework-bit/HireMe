@@ -3,10 +3,28 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from './ThemeContext'; // adjust path if your theme hook lives elsewhere
 
+// Each item now carries its own href. Internal routes (start with "/") render
+// as a router <Link>; anything still "#" (no page built yet) renders as a
+// plain <a> so it's obvious at a glance what's wired up vs. still pending.
 const LINKS = {
-  Platform: ['Browse Talent', 'Post a Project', 'How It Works', 'Pricing'],
-  Company: ['About Us', 'Careers', 'Blog', 'Press'],
-  Support: ['Help Center', 'Contact Us', 'Privacy Policy', 'Terms of Service'],
+  Platform: [
+    { label: 'Browse Talent', href: '/search' },
+    { label: 'Post a Project', href: '#' },
+    { label: 'How It Works', href: '/how-it-works' },
+    { label: 'Pricing', href: '#' },
+  ],
+  Company: [
+    { label: 'About Us', href: '/about-us' },
+    { label: 'Careers', href: '/careers' },
+    { label: 'Blog', href: '#' },
+    { label: 'Press', href: '#' },
+  ],
+  Support: [
+    { label: 'Help Center', href: '/help-center' },
+    { label: 'Contact Us', href: '/contact-us' },
+    { label: 'Privacy Policy', href: '#' },
+    { label: 'Terms of Service', href: '#' },
+  ],
 };
 
 // ── Social icons — real brand marks, not letter placeholders ────────────────
@@ -49,6 +67,22 @@ const SOCIALS = [
   },
 ];
 
+// Renders a Link for internal routes, a plain <a> for placeholder "#" ones.
+const FooterLink = ({ href, label, className }) => {
+  if (href && href !== '#') {
+    return (
+      <Link to={href} className={className}>
+        {label}
+      </Link>
+    );
+  }
+  return (
+    <a href="#" className={className}>
+      {label}
+    </a>
+  );
+};
+
 const Footer = () => {
   const [openGroup, setOpenGroup] = useState(null);
   const { theme } = useTheme();
@@ -58,6 +92,9 @@ const Footer = () => {
   };
 
   const logoSrc = theme === 'dark' ? '/hyrdlogo2.png' : '/hyrdlogo1.png';
+
+  const linkClass =
+    'text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200';
 
   return (
     <footer className="bg-[var(--bg-page)] border-t border-[var(--accent)]/10 transition-colors duration-300">
@@ -104,13 +141,8 @@ const Footer = () => {
                 {isOpen && (
                   <ul className="space-y-2.5 pb-4">
                     {items.map((item) => (
-                      <li key={item}>
-                        <a
-                          href="#"
-                          className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200"
-                        >
-                          {item}
-                        </a>
+                      <li key={item.label}>
+                        <FooterLink href={item.href} label={item.label} className={linkClass} />
                       </li>
                     ))}
                   </ul>
@@ -131,13 +163,8 @@ const Footer = () => {
                 </h4>
                 <ul className="space-y-2.5">
                   {items.map((item) => (
-                    <li key={item}>
-                      <a
-                        href="#"
-                        className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200"
-                      >
-                        {item}
-                      </a>
+                    <li key={item.label}>
+                      <FooterLink href={item.href} label={item.label} className={linkClass} />
                     </li>
                   ))}
                 </ul>
