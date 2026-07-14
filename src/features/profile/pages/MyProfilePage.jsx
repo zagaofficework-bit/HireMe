@@ -4,7 +4,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useMyProfile } from '../../../hooks/useProfile';
 import { useIncomingHireRequests } from "../../../hooks/useHire";
 import MainLayout from '../../../layouts/MainLayout';
-import {  ProfileCardCompact } from '../components/ProfileCardCompact';
+import { ProfileCardOwner } from '../components/ProfileCardOwner';
 import {
   AboutSection,
   RecentWork,
@@ -81,7 +81,12 @@ const MyProfilePage = () => {
           </div>
         )}
 
-        <ProfileCardCompact
+        {/* Owner-only card — Edit Profile action only. This is NOT
+           ProfileCardCompact (that's the SearchPage grid card clients
+           browse, with Hire Now / View Profile / Bookmark). Using that
+           here was showing hire/message actions on the freelancer's own
+           profile and its onEditClick prop wasn't even wired up. */}
+        <ProfileCardOwner
           profile={profile}
           onEditClick={() => navigate('/profile/edit')}
         />

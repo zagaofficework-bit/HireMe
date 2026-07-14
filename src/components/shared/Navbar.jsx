@@ -202,23 +202,25 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* ── Mobile pill nav row (same links as desktop, horizontal scroll) ── */}
-          <div className="md:hidden flex items-center gap-2 overflow-x-auto pb-3 -mt-1 scrollbar-thin">
-            {NAV_LINKS.map(({ label, path }) => {
-              const active = location.pathname === path;
-              return (
-                <Link
-                  key={label}
-                  to={path}
-                  className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition
-                    ${active
-                      ? 'bg-[var(--accent)] text-[var(--accent-text)]'
-                      : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border)]'}`}
-                >
-                  {label}
-                </Link>
-              );
-            })}
+          {/* ── Divider + centered mobile pill nav row (same links as desktop) ── */}
+          <div className="md:hidden border-t border-[var(--border)]">
+            <div className="flex items-center justify-center gap-2 overflow-x-auto py-3 scrollbar-thin">
+              {NAV_LINKS.map(({ label, path }) => {
+                const active = location.pathname === path;
+                return (
+                  <Link
+                    key={label}
+                    to={path}
+                    className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition
+                      ${active
+                        ? 'bg-[var(--accent)] text-[var(--accent-text)]'
+                        : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border border-[var(--border)]'}`}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </nav>
@@ -306,6 +308,11 @@ const Navbar = () => {
           </>
         ) : (
           <>
+            {/* Logo at the top of the drawer for logged-out users */}
+            <div className="flex justify-center px-5 pb-5 border-b border-[var(--border)] flex-shrink-0">
+              <img src={logoSrc} alt="Hyrd Logo" className="h-12 w-auto object-contain" />
+            </div>
+
             <div className="flex-1 overflow-y-auto px-5 py-5">
               <nav className="flex flex-col gap-1">
                 {NAV_LINKS.map(({ label, path }) => (
@@ -317,6 +324,8 @@ const Navbar = () => {
                 ))}
               </nav>
             </div>
+
+            {/* Sign Up / Log In — after all nav options */}
             <div className="grid grid-cols-2 gap-3 px-5 pb-6 pt-5 border-t border-[var(--border)] flex-shrink-0">
               <Link to="/signup" onClick={closeDrawer}
                 className="text-center text-sm font-semibold px-3 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--accent-text)]">
