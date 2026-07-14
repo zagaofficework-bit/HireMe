@@ -27,7 +27,6 @@ const MENU_BY_ROLE = {
     { to: '/company/settings',      label: 'Settings'          },
   ],
   admin: [
-    { to: '/admin/analytics',     label: 'Analytics'     },
     { to: '/admin',               label: 'Admin Panel'   },
     { to: '/admin/notifications', label: 'Notifications' },
   ],

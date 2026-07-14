@@ -12,8 +12,11 @@ import {
   useRejectProfile,
 } from "../../../hooks/useAdmin";
 
-// Pill colours keyed to approvalStatus values
+// Pill colours keyed to approvalStatus values. 'draft' means the
+// freelancer hasn't submitted the profile for review yet — neutral pill,
+// no Approve/Reject actions (there's nothing to review yet).
 const APPROVAL_PILL = {
+  draft:    "status-pill-neutral",
   pending:  "status-pill-warning",
   approved: "status-pill-success",
   rejected: "status-pill-danger",
@@ -74,6 +77,9 @@ const AdminUserDetail = () => {
                 <div>
                   <h1 className="text-xl font-bold text-[var(--text-primary)]">{user.name}</h1>
                   <p className="text-sm text-[var(--text-muted)]">{user.email}</p>
+                  {user.phone && (
+                    <p className="text-sm text-[var(--text-muted)]">{user.phone}</p>
+                  )}
                   <div className="flex gap-2 mt-2">
                     <span className="badge badge-info">{user.role}</span>
                     <span
@@ -88,6 +94,11 @@ const AdminUserDetail = () => {
                       {user.status}
                     </span>
                   </div>
+                  {user.createdAt && (
+                    <p className="text-xs text-[var(--text-muted)] mt-2">
+                      Joined {new Date(user.createdAt).toLocaleDateString()}
+                    </p>
+                  )}
                   {user.banReason && (
                     <p className="text-xs text-[var(--danger)] mt-2">Ban reason: {user.banReason}</p>
                   )}
@@ -129,7 +140,7 @@ const AdminUserDetail = () => {
 
                 <div className="flex items-center gap-2">
                   {profile.approvalStatus && (
-                    <span className={`status-pill ${APPROVAL_PILL[profile.approvalStatus] ?? ""}`}>
+                    <span className={`status-pill ${APPROVAL_PILL[profile.approvalStatus] ?? "status-pill-neutral"}`}>
                       {profile.approvalStatus}
                     </span>
                   )}
@@ -161,6 +172,14 @@ const AdminUserDetail = () => {
                   )}
                 </div>
               </div>
+
+              {/* Draft has no reviewable submission yet — say so plainly
+                 instead of leaving Approve/Reject silently absent. */}
+              {profile.approvalStatus === "draft" && (
+                <p className="text-xs text-[var(--text-muted)] mb-3">
+                  This freelancer hasn't submitted their profile for review yet.
+                </p>
+              )}
 
               {profile.approvalStatus === "rejected" && profile.rejectionReason && (
                 <p className="text-xs text-[var(--danger)] mb-3">
