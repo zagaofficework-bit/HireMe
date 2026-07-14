@@ -32,7 +32,11 @@ const VerificationPage = lazy(() => import('../features/verification/pages/Verif
 const HireRequestsPage = lazy(() => import("../features/hire/pages/HireRequestsPage"));
 const HireRequestPage = lazy(() => import('../features/hire/pages/HireRequestPage'));
 const AllCategoriesPage = lazy(() => import("../features/categories/pages/AllCategoriesPage"));
-
+const ContactUsPage = lazy(() => import("../features/services_pages/ContactUsPage"));
+const AboutUsPage = lazy(() => import("../features/services_pages/AboutUsPage"));
+const HowItWorksPage = lazy(() => import("../features/services_pages/HowItWorksPage"));
+const HelpCenterPage = lazy(() => import("../features/services_pages/HelpCenterPage"));
+const CareersPage = lazy(() => import("../features/services_pages/CareersPage"));
 
 
 // ── Page-level loading fallback ───────────────────────────────────────────────
@@ -47,29 +51,47 @@ const PageLoader = () => (
 );
 
 // ── Route map ─────────────────────────────────────────────────────────────────
+// NOTE on ordering: React Router v6 ranks routes by path specificity
+// (static segments always beat a ":param" segment), not by the order
+// they're declared in. So grouping routes by *function* below instead of
+// by "static must come before dynamic" is safe — /profile/me will always
+// out-rank /profile/:id regardless of which block it lives in. The old
+// "MUST be before" comments are kept anyway as documentation, since a
+// future contributor may not know that rule.
 const AppRoutes = () => (
   <Suspense fallback={<PageLoader />}>
     <Routes>
 
-      {/* Public */}
+      {/* ════════════════════════════════════════════════════════════════
+          PUBLIC — no auth required, visible to anyone
+      ════════════════════════════════════════════════════════════════ */}
       <Route path="/" element={<HomePage />} />
-      <Route element={<ProtectedRoute />}>
-        {/* Search — public, same as the search backend routes (optionalAuth) */}
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/notifications" element={<NotificationPage />} />
-        <Route path="/reviews" element={<ReviewPage />} />
 
-        <Route path="/verify-email" element={<VerificationPage />} />
-        <Route path="/verification" element={<VerificationPage />} />
-      </Route>
+      {/* Static / marketing pages */}
+      <Route path="/about-us" element={<AboutUsPage />} />
+      <Route path="/contact-us" element={<ContactUsPage />} />
+      <Route path="/how-it-works" element={<HowItWorksPage />} />
+      <Route path="/help-center" element={<HelpCenterPage />} />
+      <Route path="/careers" element={<CareersPage />} />
 
-      <Route element={<ProtectedRoute />}>
-        {/* ...existing routes... */}
-        <Route path="/categories" element={<AllCategoriesPage />} />
-        <Route path="/category/:slug" element={<CategoryPage />} />
+      {/* Public profile / company views — dynamic :id / :slug segments,
+          kept out of ProtectedRoute so logged-out visitors can view them.
+          MUST stay after /profile/me, /profile/edit, /profile/me/reviews,
+          /company/me, /company/edit, /company/dashboard, /company/bookmarks
+          in terms of ROUTE LOGIC (not file order — see note above). */}
+      <Route path="/profile/:id" element={<PublicProfilePage />} />
+      <Route path="/profile/:id/reviews" element={<FreelancerReviewsPage />} />
+      <Route path="/company/:slug" element={<PublicCompanyPage />} />
 
-      </Route>
-      {/* Guest-only */}
+      {/* TODO: this looks like it should require a client login (it's a
+          hire-requests inbox) but isn't wrapped in ProtectedRoute — check
+          whether HireRequestsPage does its own auth check internally. */}
+      <Route path="/hire/requests" element={<HireRequestsPage />} />
+
+
+      {/* ════════════════════════════════════════════════════════════════
+          GUEST-ONLY — redirected away if already logged in
+      ════════════════════════════════════════════════════════════════ */}
       <Route element={<GuestRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
@@ -77,58 +99,59 @@ const AppRoutes = () => (
       </Route>
 
 
-      {/* <Route element={<ProtectedRoute allowedRoles={['client']} />}>
-        
-      </Route> */}
-
-
-      {/* Protected — /profile/me and /profile/edit MUST be before /profile/:id */}
+      {/* ════════════════════════════════════════════════════════════════
+          AUTHENTICATED — any logged-in role (user, client, or admin)
+      ════════════════════════════════════════════════════════════════ */}
       <Route element={<ProtectedRoute />}>
+        {/* Search is public on the backend (optionalAuth) but kept behind
+            login here on the frontend — revisit if you want anonymous
+            browsing of search results. */}
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/notifications" element={<NotificationPage />} />
+        <Route path="/reviews" element={<ReviewPage />} />
+        <Route path="/verify-email" element={<VerificationPage />} />
+        <Route path="/verification" element={<VerificationPage />} />
+
+        <Route path="/categories" element={<AllCategoriesPage />} />
+        <Route path="/category/:slug" element={<CategoryPage />} />
+
+        {/* /profile/me and /profile/me/reviews MUST resolve before the
+            dynamic /profile/:id and /profile/:id/reviews above — this is
+            guaranteed by React Router v6's specificity ranking, not by
+            file position (see note at the top of this component). */}
         <Route path="/profile/me" element={<ProfilePage />} />
+        <Route path="/profile/me/reviews" element={<FreelancerReviewsPage />} />
       </Route>
 
+
+      {/* ════════════════════════════════════════════════════════════════
+          TALENT-ONLY — role: 'user'
+      ════════════════════════════════════════════════════════════════ */}
       <Route element={<ProtectedRoute allowedRoles={['user']} />}>
         <Route path="/profile/edit" element={<EditProfilePage />} />
       </Route>
 
 
-      {/* Hire route (client only) */}
+      {/* ════════════════════════════════════════════════════════════════
+          CLIENT-ONLY — role: 'client'
+      ════════════════════════════════════════════════════════════════ */}
       <Route element={<ProtectedRoute allowedRoles={['client']} />}>
         <Route path="/profile/:id/hire" element={<HireRequestPage />} />
-      </Route>
 
-      {/* Own reviews — navbar "Reviews" link for a logged-in freelancer
-          viewing feedback left on their own profile. MUST be before
-          /profile/:id/reviews, same rule as /profile/me above. */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/profile/me/reviews" element={<FreelancerReviewsPage />} />
-      </Route>
-
-      {/* Public profile — dynamic :id AFTER all static /profile/* segments */}
-      {/* Public profile */}
-      <Route path="/profile/:id" element={<PublicProfilePage />} />
-
-      {/* Public — anyone viewing a specific freelancer's reviews,
-          reached via the "View more" button on ReviewsCarousel. */}
-      <Route path="/profile/:id/reviews" element={<FreelancerReviewsPage />} />
-
-      {/* Company — /company/me and /company/edit MUST be before /company/:slug */}
-      <Route element={<ProtectedRoute allowedRoles={['client']} />}>
+        {/* /company/me, /company/edit, /company/dashboard, and
+            /company/bookmarks MUST resolve before the dynamic
+            /company/:slug in the PUBLIC section above — again guaranteed
+            by v6's ranking, not by file order. */}
         <Route path="/company/dashboard" element={<ClientDashboardPage />} />
         <Route path="/company/me" element={<MyCompanyPage />} />
         <Route path="/company/edit" element={<EditCompanyPage />} />
         <Route path="/company/bookmarks" element={<BookmarksPage />} />
-
       </Route>
 
 
-
-      <Route path="/hire/requests" element={<HireRequestsPage />} />
-
-      {/* Public company page — dynamic :slug AFTER all static /company/* segments */}
-      <Route path="/company/:slug" element={<PublicCompanyPage />} />
-
-      {/* Admin */}
+      {/* ════════════════════════════════════════════════════════════════
+          ADMIN-ONLY — role: 'admin'
+      ════════════════════════════════════════════════════════════════ */}
       <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
@@ -136,7 +159,10 @@ const AppRoutes = () => (
         <Route path="/admin/companies" element={<AdminCompaniesPage />} />
       </Route>
 
-      {/* Utility — DO NOT comment these out */}
+
+      {/* ════════════════════════════════════════════════════════════════
+          UTILITY — DO NOT COMMENT THESE OUT
+      ════════════════════════════════════════════════════════════════ */}
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="*" element={<Navigate to="/404" replace />} />

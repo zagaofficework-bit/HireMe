@@ -15,20 +15,22 @@ const MENU_BY_ROLE = {
   user: [
     { to: '/profile/me',            label: 'My Profile'   },
     { to: '/profile/edit',          label: 'Edit Profile' },
-    { to: '/profile/notifications', label: 'Notification' },
+    { to: '/notifications', label: 'Notification' },
     { to: '/profile/me/reviews',       label: 'Reviews'      },
     { to: '/settings',              label: 'Settings'     },
   ],
   client: [
     { to: '/company/dashboard',     label: 'Company Dashboard' },
     { to: '/company/me',            label: 'Company Profile'   },
-    { to: '/company/notifications', label: 'Notifications'     },
+    { to: '/notifications', label: 'Notifications'     },
     { to: '/company/bookmarks',     label: 'Bookmarks'         },
     { to: '/company/settings',      label: 'Settings'          },
   ],
   admin: [
     { to: '/admin',               label: 'Admin Panel'   },
-    { to: '/admin/notifications', label: 'Notifications' },
+    { to: '/admin/users',           label: 'Users'         },
+    { to: '/admin/companies',       label: 'Companies'     },
+    { to: '/notifications',   label: 'Notifications' },
   ],
 };
 

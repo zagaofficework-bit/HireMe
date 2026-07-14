@@ -18,7 +18,7 @@ import { logoutApi } from '../../api/auth.api';
 const NAV_LINKS = [
   { label: 'Explore', path: '/search' },
   { label: 'Categories', path: '/categories' },
-  { label: 'Enterprise', path: '/enterprise' },
+  // { label: 'Enterprise', path: '/enterprise' },
 ];
 
 /* ── Drawer icons (stroke-based, match existing Navbar style) ─────────── */
