@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Clock, ShieldAlert, LifeBuoy, CheckCircle2, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import MainLayout from '../../../components/layouts/MainLayout';
+import MainLayout from "../../layouts/MainLayout";
 
 /**
  * ContactUsPage

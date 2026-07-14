@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Search, ChevronDown, User, Briefcase, ShieldCheck, CreditCard, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import MainLayout from '../../../components/layouts/MainLayout';
+import MainLayout from "../../layouts/MainLayout";
 
 /**
  * HelpCenterPage

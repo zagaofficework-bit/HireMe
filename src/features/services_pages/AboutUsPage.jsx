@@ -8,7 +8,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import MainLayout from '../../../components/layouts/MainLayout';
+import MainLayout from "../../layouts/MainLayout";
 
 /**
  * AboutUsPage

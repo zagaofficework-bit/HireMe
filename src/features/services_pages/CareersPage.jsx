@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapPin, Clock, ArrowUpRight, Sparkles } from 'lucide-react';
-import MainLayout from '../../../components/layouts/MainLayout';
+import MainLayout from "../../layouts/MainLayout";
 
 /**
  * CareersPage
