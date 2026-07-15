@@ -91,7 +91,7 @@ const Footer = () => {
     setOpenGroup((prev) => (prev === group ? null : group));
   };
 
-  const logoSrc = theme === 'dark' ? '/hyrdlogo2.png' : '/hyrdlogo1.png';
+  const logoSrc = theme === 'dark' ? '/HyrdLogo1.png' : '/HyrdLogo2.png';
 
   const linkClass =
     'text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200';
