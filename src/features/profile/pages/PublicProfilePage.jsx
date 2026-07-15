@@ -64,6 +64,7 @@ const PublicProfilePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: profile, isLoading, isError } = usePublicProfile(id);
+  const [callModalOpen, setCallModalOpen] = useState(false);
 
   if (isLoading) return (
     <MainLayout>
@@ -84,8 +85,6 @@ const PublicProfilePage = () => {
   }
 
   const goToHire = () => navigate(`/profile/${id}/hire`);
-
-  const [callModalOpen, setCallModalOpen] = useState(false);
 
   // Opens an in-app popup showing the freelancer's number, instead of
   // immediately handing off to the OS's tel: handler.

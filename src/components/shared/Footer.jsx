@@ -1,7 +1,7 @@
 // src/components/shared/Footer.jsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme } from './ThemeContext'; // adjust path if your theme hook lives elsewhere
+import { useTheme } from "../../components/shared/ThemeContext"; // adjust path if your theme hook lives elsewhere
 
 // Each item now carries its own href. Internal routes (start with "/") render
 // as a router <Link>; anything still "#" (no page built yet) renders as a
