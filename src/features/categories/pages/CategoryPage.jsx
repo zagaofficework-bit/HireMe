@@ -5,6 +5,7 @@ import { useSearchProfiles } from '../../../hooks/useSearch';
 import { useCategories } from '../../../hooks/useCategories';
 import MainLayout from '../../../layouts/MainLayout';
 import { getSkillIcon } from '../../../utils/skillsicons';
+import { ProfileCardCompact } from "../../profile/components/ProfileCardCompact" // ← add — same card used on homepage (FeaturedProfessionals.jsx)
 
 const ACCENTS = [
   { accent: '#29c8d6', from: 'rgba(41,200,214,0.15)',  to: 'rgba(16,80,86,0.15)'   },
@@ -92,6 +93,11 @@ const CategoryPage = () => {
   const selectSkill = (skillName) => updateFilters({ skills: skillName, view: '' });
   const browseAllInCategory = () => updateFilters({ skills: '', view: 'all' });
   const backToSubcategories = () => updateFilters({ skills: '', view: '' });
+
+  // Same handlers FeaturedProfessionals.jsx passes into ProfileCardCompact,
+  // so "Hire Now" / "View Profile" behave identically on both pages.
+  const goToProfile = (id) => navigate(`/profile/${id}`);
+  const goToHire = (id) => navigate(`/profile/${id}/hire`);
 
   const profiles = data?.profiles || [];
   const pagination = data?.pagination;
@@ -269,60 +275,13 @@ const CategoryPage = () => {
               {isFetching && <span className="ml-2" style={{ color: 'var(--accent)' }}>refreshing…</span>}
             </p>
 
+            {/* Same card component as the homepage's Featured Professionals
+               section — was inline custom markup before, which is why it
+               looked different here. */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {profiles.map((p) => {
-                return (
-                  <Link
-                    to={`/profile/${p._id}`}
-                    key={p._id}
-                    className="theme-card p-5 space-y-3 block hover:-translate-y-0.5 transition-transform"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={p.profileImage?.url || '/default-avatar.png'}
-                        alt={p.fullName}
-                        className="w-12 h-12 rounded-full object-cover border"
-                        style={{ borderColor: 'var(--border)' }}
-                      />
-                      <div className="min-w-0">
-                        <p className="font-semibold text-sm truncate" style={{ color: 'var(--text-primary)' }}>{p.fullName}</p>
-                        <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
-                          {p.location?.city}{p.location?.city && p.location?.state ? ', ' : ''}{p.location?.state}
-                        </p>
-                      </div>
-                      {p.isVerified && <span className="badge badge-accent ml-auto">Verified</span>}
-                    </div>
-
-                    {p.bio && (
-                      <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>{p.bio}</p>
-                    )}
-
-                    {p.skills?.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {p.skills.slice(0, 4).map((s) => (
-                          <span key={s.name} className="badge badge-info">{s.name}</span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div
-                      className="flex items-center justify-between text-xs pt-1 border-t"
-                      style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
-                    >
-                      <span>
-                        {p.hourlyRate?.amount
-                          ? `₹${p.hourlyRate.amount}/hr`
-                          : p.expectedSalary?.min
-                            ? `₹${p.expectedSalary.min}+/mo`
-                            : 'Rate on request'}
-                      </span>
-                      {p.averageRating > 0 && (
-                        <span>★ {p.averageRating.toFixed(1)} ({p.totalReviews})</span>
-                      )}
-                    </div>
-                  </Link>
-                );
-              })}
+              {profiles.map((p) => (
+                <ProfileCardCompact key={p._id} profile={p} onView={goToProfile} onHire={goToHire} />
+              ))}
             </div>
 
             {pagination && pagination.pages > 1 && (
