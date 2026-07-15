@@ -1,14 +1,13 @@
 // src/features/reports/components/ReportModal.jsx
 //
-// NOTE: This assumes a uiSlice shaped like:
-//   state.ui.reportModal = { isOpen: boolean, profileId: string | null }
-// with actions `closeReportModal()` exported from '../../../store/ui.slice'
-// (or wherever your uiSlice lives). Adjust the import path / selector /
-// action names below to match your actual slice — I don't have that file.
+// Reads report-modal open/close state from the `reports` slice
+// (reports.slice.js) — NOT a separate `ui` slice. Fixed from an earlier
+// draft that assumed `state.ui.reportModal`; the actual slice you have
+// is named 'reports', so the store key is `state.reports`.
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { closeReportModal } from '../../../store/ui.slice';
-import { useReport } from '../../../hooks/useReport';
+import { closeReportModal } from '../services/reports.slice';
+import { useReport } from "../../../hooks/useReports";
 
 const REASONS = [
   { value: 'fake_profile', label: 'Fake profile' },
@@ -21,7 +20,7 @@ const REASONS = [
 
 const ReportModal = () => {
   const dispatch = useDispatch();
-  const { isOpen, profileId } = useSelector((state) => state.ui.reportModal);
+  const { isOpen, profileId } = useSelector((state) => state.reports.reportModal);
   const { mutate, isPending } = useReport();
 
   const [reason, setReason] = useState('');

@@ -7,7 +7,7 @@
 // ProfileCard.jsx up top.
 //
 // LAYOUT CHANGE: quick-glance facts (rate, availability, rating, location)
-// and the hire/message actions moved out of ProfileHero and into the new
+// and the hire/call actions moved out of ProfileHero and into the new
 // ProfileSidebar below. Reasoning: on the public profile page, that block
 // was duplicated info sitting in a full-width hero, which is also why the
 // page read as "too wide" — a single full-bleed column has nothing to
@@ -15,6 +15,12 @@
 // content column (see PublicProfilePage.jsx) and stay sticky while the
 // visitor scrolls through Experience / Education / etc. ProfileHero is now
 // just the photo + headline + intro + availability pill.
+//
+// CALL CHANGE: ProfileSidebar / ProfileCTA used to take an `onMessage`
+// prop wired to a mailto: link ("Send Message"). PublicProfilePage.jsx now
+// opens the visitor's phone dialer via a `tel:` link instead (gated by
+// canSeeContact), so both components take `onCall` and render "Call"
+// instead.
 //
 // Each section returns null when it has nothing to show, so pages can
 // render all of them unconditionally without extra guards.
@@ -123,11 +129,11 @@ export const ProfileHero = ({ profile }) => {
   );
 };
 
-// ── Sidebar — quick-glance facts + hire/message actions. ───────────────────
+// ── Sidebar — quick-glance facts + hire/call actions. ───────────────────
 // Meant to sit alongside a narrower main content column and stay sticky
 // while the visitor scrolls (see PublicProfilePage.jsx). This is what the
 // rate/rating/location row used to be inside ProfileHero.
-export const ProfileSidebar = ({ profile, onHire, onMessage }) => {
+export const ProfileSidebar = ({ profile, onHire, onCall }) => {
   if (!profile) return null;
 
   const { fullName, averageRating = 0, totalReviews = 0, location, hourlyRate, availability } = profile;
@@ -168,8 +174,8 @@ export const ProfileSidebar = ({ profile, onHire, onMessage }) => {
           Hire {fullName?.split(' ')[0]}
         </button>
         <div className="flex gap-2">
-          <button className="btn btn-secondary flex-1" onClick={onMessage}>
-            Send Message
+          <button className="btn btn-secondary flex-1" onClick={onCall}>
+            📞 Call
           </button>
           <BookmarkButton profileId={profile._id} variant="icon" />
         </div>
@@ -376,7 +382,7 @@ export const ProofOfExcellence = ({ stats, testimonial }) => {
 };
 
 // ── Closing CTA ─────────────────────────────────────────────────────────────
-export const ProfileCTA = ({ fullName, onHire, onMessage }) => (
+export const ProfileCTA = ({ fullName, onHire, onCall }) => (
   <div
     className="rounded-2xl p-6 flex items-center justify-between flex-wrap gap-4"
     style={{ background: 'var(--bg-elevated)' }}
@@ -393,8 +399,8 @@ export const ProfileCTA = ({ fullName, onHire, onMessage }) => (
       <button className="btn btn-primary" onClick={onHire}>
         Hire {fullName?.split(' ')[0]}
       </button>
-      <button className="btn btn-secondary" onClick={onMessage}>
-        Send Message
+      <button className="btn btn-secondary" onClick={onCall}>
+        📞 Call
       </button>
     </div>
   </div>
