@@ -32,6 +32,13 @@
 // REVIEWS: ReviewsCarousel ("What Clients Say") added directly after
 // PreferencesDisplay — featured reviews + a "View all reviews" button
 // that routes to /profile/:id/reviews (FreelancerReviewsPage).
+// CALL FIX #2: `goToCall` used to jump straight to `tel:`, which hands
+// off to whatever the OS has registered for phone calls — on desktop
+// with nothing configured, that can look like it "goes to a website"
+// or does nothing useful. Replaced with a small in-app popup showing
+// the number, with an explicit "Call Now" (tel: handoff) and "Copy
+// Number" action, so nothing auto-launches on click.
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { usePublicProfile } from '../../../hooks/useProfile';
@@ -78,7 +85,10 @@ const PublicProfilePage = () => {
 
   const goToHire = () => navigate(`/profile/${id}/hire`);
 
-  // Opens the visitor's phone dialer with the freelancer's number.
+  const [callModalOpen, setCallModalOpen] = useState(false);
+
+  // Opens an in-app popup showing the freelancer's number, instead of
+  // immediately handing off to the OS's tel: handler.
   // CHANGE `profile.contact?.phone` below if your Profile schema stores
   // it flat (e.g. `profile.phone`) instead of nested under `contact`.
   const goToCall = () => {
@@ -87,7 +97,7 @@ const PublicProfilePage = () => {
       alert(`${profile.fullName} hasn't listed a phone number yet.`);
       return;
     }
-    window.location.href = `tel:${phone}`;
+    setCallModalOpen(true);
   };
 
   return (
@@ -138,6 +148,53 @@ const PublicProfilePage = () => {
           />
         </div>
       </div>
+
+      {/* ── Call popup — shows the number instead of auto-launching tel: ── */}
+      {callModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: 'rgba(8, 21, 20, 0.6)' }}
+          onClick={() => setCallModalOpen(false)}
+        >
+          <div
+            className="theme-card w-full max-w-sm p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-display text-lg font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
+              Call {profile.fullName?.split(' ')[0]}
+            </h3>
+            <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+              {profile.contact?.phone}
+            </p>
+            <div className="flex flex-col gap-2">
+              <a
+                href={`tel:${profile.contact?.phone}`}
+                className="btn btn-primary w-full text-center"
+                onClick={() => setCallModalOpen(false)}
+              >
+                Call Now
+              </a>
+              <button
+                type="button"
+                className="btn btn-secondary w-full"
+                onClick={() => {
+                  navigator.clipboard?.writeText(profile.contact?.phone || '');
+                  setCallModalOpen(false);
+                }}
+              >
+                Copy Number
+              </button>
+              <button
+                type="button"
+                className="btn btn-ghost w-full"
+                onClick={() => setCallModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 };
