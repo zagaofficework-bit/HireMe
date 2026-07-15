@@ -8,10 +8,20 @@
 // which were built for EditProfilePage's plain form layout, not for a
 // page a client is browsing.
 //
-// MESSAGE CHANGE: "Send Message" no longer routes to an internal
-// /messages/new page. It builds a mailto: link (using the freelancer's
-// profile.email) and opens it, so clicking the button hands off straight
-// to the client's own email app with a pre-filled subject/recipient.
+// CALL FIX: ProfileDetailsSections.jsx moved on from a mailto "Send
+// Message" button to a `tel:` "Call" button — both ProfileSidebar and
+// ProfileCTA now take `onCall`, not `onMessage`. This page hadn't been
+// updated to match: ProfileSidebar was never given an `onCall` prop at
+// all, and ProfileCTA was still being passed the old `onMessage`, which
+// that component no longer reads. Both Call buttons were silently
+// no-ops (`onClick={undefined}`). Replaced the old mailto `goToMessage`
+// with a single `goToCall` (same fallback-alert pattern) and wired it
+// to both components.
+//
+// NOTE: assumes phone lives at `profile.contact?.phone`, matching the
+// `updateContact({ contact })` wrapper shape in profile.api.js. If your
+// Profile schema actually stores it flat as `profile.phone`, change the
+// one line marked below.
 //
 // LAYOUT: two-column — a narrower main content column for Hero/About/
 // Work/Experience/etc, and a sticky sidebar carrying the quick-glance
@@ -68,21 +78,16 @@ const PublicProfilePage = () => {
 
   const goToHire = () => navigate(`/profile/${id}/hire`);
 
-  // Opens the visitor's own email client with the freelancer's address
-  // pre-filled, instead of navigating to an internal messaging page.
-  // CHANGE `profile.email` below if your Profile schema names the field
-  // differently (e.g. profile.contactEmail, profile.user?.email).
-  const goToMessage = () => {
-    const email = profile.email;
-    if (!email) {
-      alert(`${profile.fullName} hasn't listed a contact email yet.`);
+  // Opens the visitor's phone dialer with the freelancer's number.
+  // CHANGE `profile.contact?.phone` below if your Profile schema stores
+  // it flat (e.g. `profile.phone`) instead of nested under `contact`.
+  const goToCall = () => {
+    const phone = profile.contact?.phone;
+    if (!phone) {
+      alert(`${profile.fullName} hasn't listed a phone number yet.`);
       return;
     }
-    const subject = encodeURIComponent(`Regarding your Hyrd profile`);
-    const body = encodeURIComponent(
-      `Hi ${profile.fullName?.split(' ')[0] || ''},\n\nI came across your profile on Hyrd and would like to discuss a project.\n\n`
-    );
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    window.location.href = `tel:${phone}`;
   };
 
   return (
@@ -110,7 +115,11 @@ const PublicProfilePage = () => {
           {/* Sidebar — quick facts + actions, sticky while scrolling */}
           <aside className="mt-6 lg:mt-0">
             <div className="lg:sticky lg:top-24">
-              <ProfileSidebar profile={profile} onHire={goToHire} onMessage={goToMessage} />
+              <ProfileSidebar
+                profile={profile}
+                onHire={goToHire}
+                onCall={goToCall}
+              />
             </div>
           </aside>
         </div>
@@ -125,7 +134,7 @@ const PublicProfilePage = () => {
           <ProfileCTA
             fullName={profile.fullName}
             onHire={goToHire}
-            onMessage={goToMessage}
+            onCall={goToCall}
           />
         </div>
       </div>
