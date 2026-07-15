@@ -18,6 +18,8 @@ import { logoutApi } from '../../api/auth.api';
 const NAV_LINKS = [
   { label: 'Explore', path: '/search' },
   { label: 'Categories', path: '/categories' },
+  { label: 'Contact Us', path: '/contact-us' },
+  { label: 'About Us', path: '/about-us' },
   // { label: 'Enterprise', path: '/enterprise' },
 ];
 
@@ -81,23 +83,23 @@ const CheckIcon = (p) => (
 /* ── Same per-role menu as ProfileDropdownMenu, with icons for the drawer ── */
 const ROLE_NAV_ITEMS = {
   admin: [
-    { to: '/admin/analytics',     label: 'Analytics',     icon: AnalyticsIcon },
-    { to: '/admin',               label: 'Admin Panel',   icon: HomeIcon },
+    { to: '/admin/analytics', label: 'Analytics', icon: AnalyticsIcon },
+    { to: '/admin', label: 'Admin Panel', icon: HomeIcon },
     { to: '/admin/notifications', label: 'Notifications', icon: BellIcon },
   ],
   client: [
-    { to: '/company/dashboard',     label: 'Company Dashboard', icon: HomeIcon },
-    { to: '/company/me',            label: 'Company Profile',   icon: ProfileIcon },
-    { to: '/company/notifications', label: 'Notifications',     icon: BellIcon },
-    { to: '/company/bookmarks',     label: 'Bookmarks',         icon: BookmarkIcon },
-    { to: '/company/settings',      label: 'Settings',          icon: SettingsIcon },
+    { to: '/company/dashboard', label: 'Company Dashboard', icon: HomeIcon },
+    { to: '/company/me', label: 'Company Profile', icon: ProfileIcon },
+    { to: '/company/notifications', label: 'Notifications', icon: BellIcon },
+    { to: '/company/bookmarks', label: 'Bookmarks', icon: BookmarkIcon },
+    { to: '/company/settings', label: 'Settings', icon: SettingsIcon },
   ],
   user: [
-    { to: '/profile/me',            label: 'My Profile',   icon: ProfileIcon },
-    { to: '/profile/edit',          label: 'Edit Profile', icon: EditIcon },
+    { to: '/profile/me', label: 'My Profile', icon: ProfileIcon },
+    { to: '/profile/edit', label: 'Edit Profile', icon: EditIcon },
     { to: '/profile/notifications', label: 'Notification', icon: BellIcon },
-    { to: '/profile/reviews',       label: 'Reviews',      icon: StarIcon },
-    { to: '/settings',              label: 'Settings',     icon: SettingsIcon },
+    { to: '/profile/reviews', label: 'Reviews', icon: StarIcon },
+    { to: '/settings', label: 'Settings', icon: SettingsIcon },
   ],
 };
 
@@ -112,7 +114,7 @@ const Navbar = () => {
   const { user } = useSelector((s) => s.auth);
   const { theme } = useTheme();
 
-  const logoSrc = theme === 'dark' ? '/hyrdlogo2.png' : '/hyrdlogo1.png';
+  const logoSrc = theme === 'dark' ? '/HyrdLogo1.png' : '/HyrdLogo2.png';
   const initial = user?.name?.charAt(0)?.toUpperCase() ?? '?';
   const navItems = ROLE_NAV_ITEMS[user?.role] || [];
   const roleLabel = ROLE_LABEL[user?.role] || '';
